@@ -1,2 +1,2 @@
 # stdproject
-student management
+student management project
