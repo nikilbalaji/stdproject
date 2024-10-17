@@ -15,3 +15,6 @@ class Feedback(models.Model):
     sname = models.CharField(max_length=255)
     remarks = models.CharField(max_length=255)
     rating = models.CharField(max_length=255)
+
+class fileupload(models.Model):
+    file = models.FileField()

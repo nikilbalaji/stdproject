@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from stdmodule.models import Register, Feedback
 import sqlite3
 from django.core.mail import EmailMessage
+from django.core.files.storage import FileSystemStorage
+from django.views.generic import TemplateView
+
 # Create your views here.
 def menu(request):
     return render(request, "menu.html")
@@ -20,7 +22,7 @@ def login(request):
                 return render(request,"login.html")
         elif role =='Student':
             mark = 0
-            conn = sqlite3.connect("db.sqlite3")
+            conn = sqlite3.connect("/home/nikilbalaji/stdproject/db.sqlite3")
             c = conn.cursor()
             c.execute("select sid, password from stdmodule_Register where sid = ? and password = ?", (username, password))
             if c.fetchone() is not None:
@@ -72,7 +74,7 @@ def markupdate(request):
     if request.method=='POST':
         sid1 = request.POST.get("myid")
         mark1 = request.POST.get("mymark")
-        conn = sqlite3.connect('db.sqlite3')
+        conn = sqlite3.connect('/home/nikilbalaji/stdproject/db.sqlite3')
         c = conn.cursor()
         c.execute("update stdmodule_Register set mark =? where sid = ?", (mark1, sid1))
         conn.commit()
@@ -112,3 +114,14 @@ def feedbackupload(request):
         cdata = Feedback.objects.all()
         return render(request,"feedbackupload.html",{'data':cdata})
     return render(request, "feedbackupload.html",{'sid':request.session['sid']})
+
+
+def upload(request):
+    if request.method == 'POST' and 'document' in request.FILES:
+        uploaded_file = request.FILES['document']
+        fs = FileSystemStorage()
+        fs.save(uploaded_file.name, uploaded_file)
+    return render(request, "upload.html")
+
+def display(request):
+    return render(request, "display.html")
